@@ -16,18 +16,27 @@
 # define PRI_FILENAME "key.pem"
 # define PUB_FILENAME "key_pub.pem"
 
+/**
+ * struct sig_s - signature structure
+ * @sig: signature
+ * @len: signature length
+ */
 typedef struct sig_s
 {
 	uint8_t sig[SIG_MAX_LEN];
 	uint8_t len;
 } sig_t;
-uint8_t *sha256(int8_t const *s, size_t len, uint8_t digest[SHA256_DIGEST_LENGTH]);
+
+uint8_t *sha256(int8_t const *s, size_t len,
+			uint8_t digest[SHA256_DIGEST_LENGTH]);
 EC_KEY *ec_create(void);
 void _print_hex_buffer(uint8_t const *buf, size_t len);
 uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]);
 EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN]);
 int ec_save(EC_KEY *key, char const *folder);
 EC_KEY *ec_load(char const *folder);
-uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen, sig_t *sig);
-int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen, sig_t const *sig);
+uint8_t *ec_sign(EC_KEY const *key,
+			uint8_t const *msg, size_t msglen, sig_t *sig);
+int ec_verify(EC_KEY const *key, uint8_t const *msg,
+			size_t msglen, sig_t const *sig);
 #endif
