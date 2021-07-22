@@ -2,6 +2,7 @@
 #define _CRYPTO_
 #include <openssl/sha.h>
 #include <openssl/ec.h>
+#include <openssl/obj_mac.h>
 #include <stdint.h>
 
 #define EC_CURVE NID_secp256k1
