@@ -5,7 +5,7 @@ uint8_t *ec_sign(EC_KEY const *key,
 {
 	uint32_t len = 0;
 
-	if (!key || !msg)
+	if (!key || !msg || !msglen)
 		return (NULL);
 
 	bzero(sig->sig, sizeof(sig->sig));
