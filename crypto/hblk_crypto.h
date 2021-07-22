@@ -1,5 +1,5 @@
-#ifndef _CRYPTO_
-#define _CRYPTO_
+#ifndef _HBT_CRYPTO_
+#define _HBT_CRYPTO_
 #include <openssl/sha.h>
 #include <openssl/ec.h>
 #include <openssl/obj_mac.h>
