@@ -1,12 +1,7 @@
 #ifndef _CRYPTO_
 #define _CRYPTO_
 #include <openssl/sha.h>
-#include <openssl/bio.h>
-#include <openssl/err.h>
 #include <openssl/ec.h>
-#include <openssl/pem.h>
-#include <openssl/bn.h>
-#include <openssl/ecdsa.h>
 #include <stdint.h>
 
 #define EC_CURVE NID_secp256k1
