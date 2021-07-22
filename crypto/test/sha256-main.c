@@ -6,17 +6,25 @@
 
 void _print_hex_buffer(uint8_t const *buf, size_t len);
 
+/**
+ * main - Entry point
+ *
+ * @ac: Arguments counter
+ * @av: Arguments vector
+ *
+ * Return: EXIT_SUCCESS or EXIT_FAILURE
+ */
 int main(int ac, char **av)
 {
 	uint8_t hash[SHA256_DIGEST_LENGTH];
 	uint8_t *test_ptr;
-	
+
 	if (ac < 2)
 	{
 		fprintf(stderr, "Usage: %s arg\n", av[0]);
 		return (EXIT_FAILURE);
 	}
-	
+
 	test_ptr = sha256((int8_t *)av[1], strlen(av[1]), hash);
 	if (!test_ptr)
 	{
@@ -30,7 +38,7 @@ int main(int ac, char **av)
 	}
 	printf("\"%s\" hash is: ", av[1]);
 	_print_hex_buffer(hash, SHA256_DIGEST_LENGTH);
-	
+
 	printf("\n");
 	return (EXIT_SUCCESS);
 }
