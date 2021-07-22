@@ -24,7 +24,6 @@ int ec_save(EC_KEY *key, char const *folder)
 	}
 
 	sprintf(path, "%s/%s", folder, "key.pem");
-	printf("%s\n", path);
 
 	file = fopen(path, "w");
 
