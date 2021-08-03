@@ -3,6 +3,7 @@
 
 #define BLOCKCHAIN_DATA_MAX	1024
 
+#define GENESIS_HASH "\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03"
 #include <stdint.h>
 #include <llist.h>
 #include <openssl/sha.h>
@@ -27,11 +28,11 @@ typedef struct blockchain_s
  */
 typedef struct block_info_s
 {
-        uint32_t        index;
-        uint32_t        difficulty;
-        uint64_t        timestamp;
-        uint64_t        nonce;
-        uint8_t         prev_hash[SHA256_DIGEST_LENGTH];
+	uint32_t	index;
+	uint32_t	difficulty;
+	uint64_t	timestamp;
+	uint64_t	nonce;
+	uint8_t		prev_hash[SHA256_DIGEST_LENGTH];
 } block_info_t;
 
 /**
@@ -42,8 +43,8 @@ typedef struct block_info_s
  */
 typedef struct block_data_s
 {
-        int8_t buffer [BLOCKCHAIN_DATA_MAX];
-        uint32_t        len;
+	int8_t buffer[BLOCKCHAIN_DATA_MAX];
+	uint32_t        len;
 } block_data_t;
 
 /**
@@ -60,21 +61,31 @@ typedef struct block_s
 	uint8_t		hash[SHA256_DIGEST_LENGTH];
 } block_t;
 
+/**
+ * struct blockchain_file_header_s - File Header
+ *
+ * @magic: magic bytes for blockchain file format
+ * @version: Blockchain version
+ * @endian: 1 litle endian, 2 big endian
+ * @n_blocks: number of blocks
+ */
 typedef struct blockchain_file_header_s
 {
 	uint8_t magic[4];
 	uint8_t version[3];
 	uint8_t endian;
 	int32_t n_blocks;
-	
+
 } blockchain_file_header_t;
 
 
 blockchain_t *blockchain_create(void);
-block_t *block_create(block_t const *prev, int8_t const *data, uint32_t data_len);
+block_t *block_create(block_t const *prev,
+			int8_t const *data, uint32_t data_len);
 void block_destroy(block_t *block);
 void blockchain_destroy(blockchain_t *blockchain);
-uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
+uint8_t *block_hash(block_t const *block,
+			uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 blockchain_t *blockchain_deserialize(char const *path);
 int block_is_valid(block_t const *block, block_t const *prev_block);
