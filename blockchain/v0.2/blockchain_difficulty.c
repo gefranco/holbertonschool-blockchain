@@ -8,7 +8,7 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 	last_block = llist_get_tail(blockchain->chain);
 	if (!last_block)
 		return (0);
-	if (last_block->info.difficulty % DIFFICULTY_ADJUSTMENT_INTERVAL == 0
+	if (last_block->info.index % DIFFICULTY_ADJUSTMENT_INTERVAL == 0
 		&& last_block->info.index != 0)
 	{
 		last_adjusted_block = llist_get_node_at(blockchain->chain, 
