@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <llist.h>
 #include <openssl/sha.h>
+#include "../../crypto/hblk_crypto.h"
 #include "transaction.h"
 /**
  * struct blockchain_s - Blockchain structure
