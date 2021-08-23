@@ -10,10 +10,10 @@ int is_tx_invalid(llist_node_t node, unsigned int idx, void *arg)
 	if (idx == 0)
 	{
 		if (coinbase_is_valid(tx, valid_tx->block_index) == 0)
-			return 1;		
+			valid_tx->is_valid = 0;	
 	} 
 	else if (transaction_is_valid(tx, valid_tx->all_unspent) == 0)
-		return 1;
+		valid_tx->is_valid = 0;
 	
 	return 0;
 }
@@ -75,7 +75,8 @@ int block_is_valid(block_t const *block, block_t const *prev_block, llist_t *all
 	valid_tx.all_unspent = all_unspent;
 	valid_tx.block_index = block->info.index;	
 
-	if (llist_for_each(block->transactions, is_tx_invalid, &valid_tx))
+	if (llist_for_each(block->transactions, is_tx_invalid, &valid_tx)
+		|| !valid_tx.is_valid)
 		return (1);
 	return (0);
 
