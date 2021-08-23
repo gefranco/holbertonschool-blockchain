@@ -90,7 +90,10 @@ transaction_t *transaction_create(EC_KEY const *sender,
 	llist_t *inputs, *outputs;
 	void *ptrs[3];
 	uint32_t total_unspent;
-
+	
+	if (!sender || !receiver || !all_unspent)
+		return (NULL);
+	
 	tx = calloc(1, sizeof(transaction_t));
 
 	if (!tx)
@@ -109,10 +112,14 @@ transaction_t *transaction_create(EC_KEY const *sender,
 		free(tx);
 		return (NULL);
 	}
-	tx->inputs = inputs;
 	outputs = out_txs_transfer(sender, receiver, amount, total_unspent);
+	if (!outputs)
+	{
+		free(tx);
+		return (NULL);
+	}
 	tx->outputs = outputs;
-
+	tx->inputs = inputs;
 	transaction_hash(tx, tx->id);
 
 	ptrs[0] = tx->id;
