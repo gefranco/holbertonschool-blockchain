@@ -97,7 +97,7 @@ transaction_t *transaction_create(EC_KEY const *sender,
 	if (!sender || !receiver || !all_unspent)
 		return (NULL);
 	
-	tx = calloc(1, sizeof(transaction_t));
+	tx = calloc(1, sizeof(*tx));
 
 	if (!tx)
 		return (NULL);
