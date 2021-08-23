@@ -7,7 +7,14 @@ int match_unspent(llist_node_t unspent, void *arg)
 
 	if (memcmp(tx_in->tx_out_hash,
 			unspent_out->out.hash,
-			SHA256_DIGEST_LENGTH) == 0)
+			SHA256_DIGEST_LENGTH) == 0
+	&& memcmp(tx_in->block_hash,
+			unspent_out->block_hash,
+			SHA256_DIGEST_LENGTH) == 0
+	&& memcmp(tx_in->tx_id,
+			unspent_out->tx_id,
+			SHA256_DIGEST_LENGTH) == 0	
+	)
 		return (1);
 	return (0);
 }
