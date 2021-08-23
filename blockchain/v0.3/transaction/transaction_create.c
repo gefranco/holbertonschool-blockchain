@@ -16,7 +16,7 @@ int sign_tx_in(llist_node_t tx, unsigned int idx, void *args)
 	void **ptr = args;
 	tx_in_t *tx_in = tx;
 	(void) idx;
-	if (!ec_sign(ptr[1], ptr[0], SHA256_DIGEST_LENGTH, &tx_in->sig))
+	if (!tx_in_sign(tx_in, ptr[0], ptr[1],ptr[2]))
 		return (1);
 	return (0);
 }
