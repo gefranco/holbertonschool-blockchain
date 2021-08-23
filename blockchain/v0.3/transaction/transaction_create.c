@@ -64,7 +64,7 @@ static llist_t *out_txs_transfer(EC_KEY const *sender,
 
 	llist_add_node(outs, tx_out, ADD_NODE_REAR);
 
-	if (leftover > 0)
+	if (leftover != 0)
 	{
 		ec_to_pub(sender, pub);
 		tx_out = tx_out_create(leftover, pub);
