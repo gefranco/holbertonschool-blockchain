@@ -1,106 +1,134 @@
 #include "transaction.h"
 #include <string.h>
 
-int filter_unspent(llist_node_t node, unsigned int idx, void *args)
-{
-	unspent_tx_out_t *unspent = node;
-	void **ptr = args;
-	tx_in_t *tx_in;
-	llist_t *inputs = ptr[1];
-	uint32_t *amount = ptr[2];
-
-	(void)idx;
-	if (!memcmp(unspent->out.pub, ptr[0], EC_PUB_LEN))
-	{
-		tx_in = tx_in_create(unspent);
-		llist_add_node(inputs, tx_in, ADD_NODE_REAR);
-		*amount += unspent->out.amount;
-	}
-	return (0);
-}
-
-int sign_tr_in_action(llist_node_t node, unsigned int idx, void *args)
+/**
+ * sign_tx_in - Sign transaction input
+ * @tx: current transaction input
+ * @idx: index of transaction input
+ * @args: argumnets
+ *        arg[0]: tx_id
+ *        arg[1]: sender private key
+ *        arg[2]: all_unspent
+ * Return: 0 on success, 1 on failure
+ */
+int sign_tx_in(llist_node_t tx, unsigned int idx, void *args)
 {
 	void **ptr = args;
-	tx_in_t *tx_in = node;
-
-	(void)idx;
-	if (!tx_in_sign(tx_in, ptr[0], ptr[1], ptr[2]))
-	{
+	tx_in_t *tx_in = tx;
+	(void) idx;
+	if (!tx_in_sign(tx_in, ptr[0], ptr[1],ptr[2]))
 		return (1);
-	}
-
 	return (0);
 }
-
-llist_t *send_amount(EC_KEY const *sender,
-					 EC_KEY const *receiver,
-					 uint32_t amount, uint32_t total)
+/**
+ * filter - collect sender's unspent transactions
+ * @tx_out: current unspent transaction
+ * @id_tx: index of unspent transaction output
+ * @args: arguments
+ *        arg[0]: sender's public key
+ *        arg[1]: llist inputs
+ *        arg[2]: amount
+ * Return: EXIT_SUCCESS or EXIT_FAILURE
+ */
+int filter(llist_node_t tx_out, unsigned int id_tx, void *args)
 {
-	llist_t *out;
-	uint32_t leftover = total - amount;
-	uint8_t pub[EC_PUB_LEN];
-	tx_out_t *node;
+	unspent_tx_out_t *unspent_tx = tx_out;
+	tx_in_t *tx_in;
+	void **p = args;
+	llist_t *inputs = p[1];
+	uint32_t *amount = p[2];
 
-	out = llist_create(MT_SUPPORT_FALSE);
-	ec_to_pub(receiver, pub);
-	node = tx_out_create(amount, pub);
-	if (!node)
+	(void)id_tx;
+	if (memcmp(unspent_tx->out.pub, p[0], EC_PUB_LEN) == 0)
 	{
-		return (NULL);
+		tx_in = tx_in_create(unspent_tx);
+		llist_add_node(inputs, tx_in, ADD_NODE_REAR);
+		*amount += unspent_tx->out.amount;
 	}
-	llist_add_node(out, node, ADD_NODE_REAR);
+	return (0);
+
+}
+
+static llist_t *out_txs_transfer(EC_KEY const *sender,
+		EC_KEY const *receiver,
+		uint32_t amount, uint32_t total_unspent)
+{
+	llist_t *outs;
+	uint32_t leftover = total_unspent - amount;
+	uint8_t pub[EC_PUB_LEN];
+	tx_out_t *tx_out;
+
+	outs = llist_create(MT_SUPPORT_FALSE);
+	ec_to_pub(receiver, pub);
+	tx_out = tx_out_create(amount, pub);
+	if (!tx_out)
+		return NULL;
+	llist_add_node(outs, tx_out, ADD_NODE_REAR);
+
 	if (leftover != 0)
 	{
 		ec_to_pub(sender, pub);
-		node = tx_out_create(leftover, pub);
-		if (!node)
-		{
+		tx_out = tx_out_create(leftover, pub);
+		if (!tx_out)
 			return (NULL);
-		}
-		llist_add_node(out, node, ADD_NODE_REAR);
+		llist_add_node(outs, tx_out, ADD_NODE_REAR);
 	}
 
-	return (out);
+	return (outs);
 }
-
+/**
+ * transaction_create - creates a transaction
+ * @sender: contains the private key of the transaction sender
+ * @receiver: contains the public key of the transaction receiver
+ * @amount: the amount to send
+ * @all_unspent: the list of all the unspent outputs to date
+ * Return: EXIT_SUCCESS or EXIT_FAILURE
+ */
 transaction_t *transaction_create(EC_KEY const *sender,
-								  EC_KEY const *receiver,
-								  uint32_t amount, llist_t *all_unspent)
+			EC_KEY const *receiver,
+			uint32_t amount, llist_t *all_unspent)
 {
 	uint8_t pub[EC_PUB_LEN];
-	transaction_t *tr;
-	llist_t *in, *out;
-	void *args[3];
-	uint32_t unspent_amount = 0;
-
+	transaction_t *tx;
+	llist_t *inputs, *outputs;
+	void *ptrs[3];
+	uint32_t total_unspent;
+	
 	if (!sender || !receiver || !all_unspent)
-	{
 		return (NULL);
-	}
-	tr = calloc(1, sizeof(*tr));
-	if (!tr)
-	{
+	
+	tx = calloc(1, sizeof(transaction_t));
+
+	if (!tx)
 		return (NULL);
-	}
-	in = llist_create(MT_SUPPORT_FALSE);
+
+	inputs = llist_create(MT_SUPPORT_FALSE);
 	ec_to_pub(sender, pub);
-	args[0] = pub, args[1] = in, args[2] = &unspent_amount;
-	llist_for_each(all_unspent, filter_unspent, args);
-	if (unspent_amount < amount)
+	ptrs[0] = pub;
+	ptrs[1] = inputs;
+	ptrs[2] = &total_unspent;
+
+	llist_for_each(all_unspent, filter, ptrs);
+
+	if (total_unspent < amount)
 	{
-		free(tr);
+		free(tx);
 		return (NULL);
 	}
-	out = send_amount(sender, receiver, amount, unspent_amount);
-	if (!out)
+	outputs = out_txs_transfer(sender, receiver, amount, total_unspent);
+	if (!outputs)
 	{
-		free(tr);
+		free(tx);
 		return (NULL);
 	}
-	tr->inputs = in, tr->outputs = out;
-	transaction_hash(tr, tr->id);
-	args[0] = tr->id, args[1] = (void *)sender, args[2] = all_unspent;
-	llist_for_each(tr->inputs, sign_tr_in_action, args);
-	return (tr);
+	tx->outputs = outputs;
+	tx->inputs = inputs;
+	transaction_hash(tx, tx->id);
+
+	ptrs[0] = tx->id;
+	ptrs[1] = (void *)sender;
+	ptrs[2] = all_unspent;
+	llist_for_each(tx->inputs, sign_tx_in, ptrs);
+
+	return (tx);
 }
