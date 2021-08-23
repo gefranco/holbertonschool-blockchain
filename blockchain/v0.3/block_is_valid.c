@@ -9,10 +9,10 @@ int is_tx_invalid(llist_node_t node, unsigned int idx, void *arg)
 	
 	if (idx == 0)
 	{
-		if (coinbase_is_valid(tx, valid_tx->block_index) == 0)
+		if (!coinbase_is_valid(tx, valid_tx->block_index))
 			valid_tx->is_valid = 0;	
 	} 
-	else if (transaction_is_valid(tx, valid_tx->all_unspent) == 0)
+	else if (!transaction_is_valid(tx, valid_tx->all_unspent))
 		valid_tx->is_valid = 0;
 	
 	return 0;
