@@ -39,7 +39,7 @@ int filter(llist_node_t tx_out, unsigned int id_tx, void *args)
 	uint32_t *amount = p[2];
 
 	(void)id_tx;
-	if (memcmp(unspent_tx->out.pub, p[0], EC_PUB_LEN) == 0)
+	if (!memcmp(unspent_tx->out.pub, p[0], EC_PUB_LEN))
 	{
 		tx_in = tx_in_create(unspent_tx);
 		llist_add_node(inputs, tx_in, ADD_NODE_REAR);
