@@ -11,6 +11,7 @@
 #include <llist.h>
 #include <openssl/sha.h>
 #include "transaction/transaction.h"
+#include "../../crypto/hblk_crypto.h"
 /**
  * struct blockchain_s - Blockchain structure
  *
