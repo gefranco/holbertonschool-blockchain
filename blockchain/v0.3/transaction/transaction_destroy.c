@@ -1,4 +1,9 @@
 #include "transaction.h"
+/**
+ * transaction_destroy - deallocates a transaction structure
+ * @transaction: points to the transaction to delete
+ * Return: EXIT_SUCCESS or EXIT_FAILURE
+ */
 void transaction_destroy(transaction_t *transaction)
 {
 	if (!transaction)
