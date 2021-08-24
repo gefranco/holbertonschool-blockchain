@@ -5,6 +5,8 @@
 #include <llist.h>
 #include "../../../crypto/hblk_crypto.h"
 
+#include "blockchain.h"
+
 #define COINBASE_AMOUNT	50
 /**
  * struct transaction_s - Transaction structure
