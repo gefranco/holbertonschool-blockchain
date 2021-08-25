@@ -1,71 +1,39 @@
 #include "transaction.h"
 #include <string.h>
 
-int find_unspent(llist_node_t node, void *arg)
+int find_unspent(llist_node_t node, void *hash)
 {
-	unspent_tx_out_t *utxout = node;
-	
-	if (memcmp(arg, utxout->out.hash, SHA256_DIGEST_LENGTH))
-		return 1;
-	return (0);
+	unspent_tx_out_t *unspent = (unspent_tx_out_t *)node;
+
+	return (!memcmp(unspent->out.hash, hash, sizeof(unspent->out.hash)));
 }
 
-
-int remove_unspent(llist_node_t node, unsigned int idx, void *args)
+llist_t *update_unspent(llist_t *transactions, uint8_t block_hash[SHA256_DIGEST_LENGTH], llist_t *all_unspent)
 {
-	void **ptrs_args = args;
-	tx_in_t *txi = node;
-	(void)idx;	
-	llist_remove_node(ptrs_args[0], find_unspent, txi->tx_out_hash, 1, free);
-	return (0);
-}
+	int i, j, tmp, size;
+	transaction_t *tx;
+	tx_in_t *in;
+	tx_out_t *out;
+	unspent_tx_out_t *unspent;
 
-int add_txo_to_unspent(llist_node_t node, unsigned int idx, void *args)
-{
-	void **ptrs_args = args;
-	tx_out_t  *txo = node;
-	unspent_tx_out_t *utxo;
-	(void)idx;	
-	utxo = unspent_tx_out_create(ptrs_args[1], ptrs_args[2], txo);
-	
-	if (!utxo)
+	if (!transactions || !block_hash || !all_unspent)
+		return (all_unspent);
+
+	for (i = 0, size = llist_size(transactions); i < size; i++)
 	{
-		fprintf(stderr, "fail to create an output");
-		return (1);
+		tx = llist_get_node_at(transactions, i);
+		for (j = 0, tmp = llist_size(tx->inputs); j < tmp; j++)
+		{
+			in = llist_get_node_at(tx->inputs, j);
+			llist_remove_node(all_unspent, find_unspent, in->tx_out_hash, 1, NULL);
+		}
+		for (j = 0, tmp = llist_size(tx->outputs); j < tmp; j++)
+		{
+			out = llist_get_node_at(tx->outputs, j);
+			unspent = unspent_tx_out_create(block_hash, tx->id, out);
+			llist_add_node(all_unspent, unspent, ADD_NODE_REAR);
+		}
 	}
-	if (llist_add_node(ptrs_args[0], utxo, ADD_NODE_REAR))
-	{
-		printf("fail to add unspent txo\n");
-		return (1);
-	}
-	return (0);
-}
 
-
-int update_tx_unspent(llist_node_t node, unsigned int idx, void *args)
-{
-	transaction_t *tx = node;
-	void *ptrs[3] = {0};
-	void **ptrs_args = args;
-	(void)idx;
-	ptrs[0] = ptrs_args[0];
-	ptrs[1] = ptrs_args[1];
-	ptrs[2] = tx->id;
-	
-	llist_for_each(tx->inputs, remove_unspent, ptrs);
-	llist_for_each(tx->outputs, add_txo_to_unspent, ptrs);	
-	return (0);
-}
-
-
-llist_t *update_unspent(llist_t *transactions,
-		uint8_t block_hash[SHA256_DIGEST_LENGTH],
-		llist_t *all_unspent)
-{
-	
-	void *args[2] = {0};
-	args[0] = all_unspent;
-	args[1] = block_hash;
-	llist_for_each(transactions, update_tx_unspent, args);
 	return (all_unspent);
 }
