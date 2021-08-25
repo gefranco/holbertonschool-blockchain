@@ -79,7 +79,7 @@ typedef struct blockchain_file_header_s
 	uint8_t version[3];
 	uint8_t endian;
 	int32_t n_blocks;
-
+	int32_t n_unspent;
 } blockchain_file_header_t;
 
 
