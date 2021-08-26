@@ -96,7 +96,7 @@ llist_t *read_transactions(FILE *file, uint8_t swap_endian)
 		tx->inputs = read_inputs(file, swap_endian, num_inputs);
 		tx->outputs = read_outputs(file, swap_endian, num_outputs);
 	}	
-	return (NULL);
+	return (list);
 }
 
 
