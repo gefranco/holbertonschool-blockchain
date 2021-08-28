@@ -16,10 +16,10 @@ unspent_tx_out_t *find_unspent_output(llist_t *all_unspent, tx_in_t *tx_in)
 	for (i = 0; i < size; i++)
 	{
 		utx_out = llist_get_node_at(all_unspent, i);
-		if (!memcmp(utx_out->out.hash,
+		if (memcmp(utx_out->out.hash,
 			tx_in->tx_out_hash,
 			sizeof(utx_out->out.hash) == 0) &&
-			!memcmp(utx_out->block_hash,
+			memcmp(utx_out->block_hash,
 				tx_in->block_hash,
 				sizeof(utx_out->block_hash) == 0)
 		)
