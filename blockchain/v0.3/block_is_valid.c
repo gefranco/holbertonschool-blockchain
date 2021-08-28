@@ -1,21 +1,27 @@
 #include "blockchain.h"
 #include <string.h>
 
-
+/**
+ * is_tx_invalid - validate wheter the transaction is valid or not
+ * @node: transaction to validate
+ * @idx: transaction index
+ * @arg: arguments
+ * Return: 0 valid 1 otherwise
+ */
 int is_tx_invalid(llist_node_t node, unsigned int idx, void *arg)
 {
 	transaction_t *tx = node;
 	valid_transaction_t *valid_tx = arg;
-	
+
 	if (idx == 0)
 	{
 		if (!coinbase_is_valid(tx, valid_tx->block_index))
-			valid_tx->is_valid = 0;	
-	} 
+			return (1);
+	}
 	else if (!transaction_is_valid(tx, valid_tx->all_unspent))
-		valid_tx->is_valid = 0;
-	
-	return 0;
+		return (1);
+
+	return (0);
 }
 /**
  * is_valid_genesis - validate wheter the genesis block is valid or not
@@ -40,13 +46,15 @@ int is_valid_genesis(const block_t *block)
  * block_is_valid - validate wheter the block is valid or not
  * @block: block to validate
  * @prev_block: previous block
+ * @all_unspent: all unspent transactions
  * Return: 0 valid 1 otherwise
  */
-int block_is_valid(block_t const *block, block_t const *prev_block, llist_t *all_unspent)
+int block_is_valid(block_t const *block,
+		block_t const *prev_block, llist_t *all_unspent)
 {
 	uint8_t hash_buf[SHA256_DIGEST_LENGTH] = {0};
 	valid_transaction_t valid_tx = {0};
-	
+
 
 	if (!block)
 		return (1);
@@ -67,16 +75,15 @@ int block_is_valid(block_t const *block, block_t const *prev_block, llist_t *all
 
 	if (!hash_matches_difficulty(block->hash, block->info.difficulty))
 		return (1);
-	
+
 	if (llist_size(block->transactions) < 1)
 		return (1);
 
 	valid_tx.is_valid = 1;
 	valid_tx.all_unspent = all_unspent;
-	valid_tx.block_index = block->info.index;	
+	valid_tx.block_index = block->info.index;
 
-	if (llist_for_each(block->transactions, is_tx_invalid, &valid_tx)
-		|| !valid_tx.is_valid)
+	if (llist_for_each(block->transactions, is_tx_invalid, &valid_tx))
 		return (1);
 	return (0);
 
