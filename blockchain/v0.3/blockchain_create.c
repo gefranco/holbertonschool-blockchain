@@ -10,14 +10,10 @@
  */
 blockchain_t *blockchain_create(void)
 {
-
-
-
-
 	blockchain_t *blockchain = NULL;
 	block_t *block = NULL;
 	llist_t *list = NULL;
-	llist_t *unspent = llist_create(MT_SUPPORT_TRUE);	
+	llist_t *unspent = llist_create(MT_SUPPORT_TRUE);
 
 	blockchain = calloc(1, sizeof(blockchain_t));
 	block = calloc(1, sizeof(block_t));
