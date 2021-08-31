@@ -11,6 +11,7 @@ typedef struct state_s
 	int status;
 	EC_KEY *wallet;
 	blockchain_t *blockchain;
+	llist_t *tx_pool;
 	
 	
 } state_t;
@@ -28,6 +29,9 @@ typedef struct command_s
 
 int wallet_save(state_t *state, int argc, char *argv[]);
 int wallet_load(state_t *state, int argc, char *argv[]);
+int send_cmd(state_t *state, int argc, char *argv[]);
+
+
 void state_init(state_t *state);
 void state_clear(state_t *state);
 command_t *find_command(char *name);
