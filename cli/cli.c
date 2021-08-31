@@ -50,6 +50,8 @@ int main(void)
 	char *tkns_input[100];
 	int argc = 0;
 	size_t line_n = 0;
+	
+	state_init(&state);
 	while (1)
 	{
 		printf(">");

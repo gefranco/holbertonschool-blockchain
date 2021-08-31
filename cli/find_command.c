@@ -5,6 +5,7 @@ command_t *get_commands(void)
 {
 	static command_t commands[] = {
 		{wallet_load, "wallet_load"},
+		{wallet_save, "wallet_save"},
 		{NULL, NULL}
 	};
 	return (commands);
