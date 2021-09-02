@@ -7,6 +7,8 @@ command_t *get_commands(void)
 		{wallet_load, "wallet_load"},
 		{wallet_save, "wallet_save"},
 		{send_cmd, "send"},
+		{mine_cmd, "mine"},
+		{info_cmd, "info"},
 		{NULL, NULL}
 	};
 	return (commands);
