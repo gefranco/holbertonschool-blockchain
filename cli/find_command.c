@@ -19,10 +19,10 @@ command_t *get_commands(void)
 command_t *find_command(char *name)
 {
 	command_t *command = get_commands();
-	
+
 	while (command->name)
 	{
-		if(strcmp(name, command->name) == 0)
+		if (strcmp(name, command->name) == 0)
 			return (command);
 		command += 1;
 	}

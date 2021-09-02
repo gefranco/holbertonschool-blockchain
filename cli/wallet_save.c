@@ -25,6 +25,6 @@ int wallet_save(state_t *state, int argc, char *argv[])
 
 	fprintf(stdout, "Saved wallet to %s\n",
 		argv[1]);
-	
-	return((state->status = EXIT_SUCCESS));
+
+	return ((state->status = EXIT_SUCCESS));
 }
