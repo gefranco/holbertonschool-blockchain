@@ -73,7 +73,7 @@ llist_t *read_transactions(FILE *file, uint8_t swap_endian)
 	if(!list)
 		return (NULL);
 	if (swap_endian)
-                        _swap_endian(&num_txs, sizeof(num_txs));
+		_swap_endian(&num_txs, sizeof(num_txs));
 	if((int)num_txs <= 0)
 	{
 		llist_destroy(list, 0, NULL);
@@ -99,6 +99,32 @@ llist_t *read_transactions(FILE *file, uint8_t swap_endian)
 	return (list);
 }
 
+int read_unspent_txs(FILE *file, uint8_t swap_endian,
+                        blockchain_t *blockchain, int size)
+{
+	int i;
+        unspent_tx_out_t *utxo;
+        llist_t *list = llist_create(MT_SUPPORT_TRUE);
+
+        for (i = 0; i < size; i++)
+        {
+                utxo = calloc(1, sizeof(unspent_tx_out_t));
+                if (!utxo)
+                        return (0);
+                fread(&utxo->block_hash, sizeof(utxo->block_hash), 1, file);
+                fread(&utxo->tx_id, sizeof(utxo->tx_id), 1, file);
+                fread(&utxo->out.amount, sizeof(utxo->out.amount), 1, file);
+		fread(&utxo->out.pub, sizeof(utxo->out.pub), 1, file);
+                fread(&utxo->out.hash, sizeof(utxo->out.hash), 1, file);
+
+		if (swap_endian)
+                        _swap_endian(&utxo->out.amount, sizeof(utxo->out.amount));
+                llist_add_node(list, utxo, ADD_NODE_REAR);
+
+        }
+        blockchain->unspent = list;
+        return (1);
+}
 
 /**
  * read_blocks - Entry point
@@ -187,6 +213,18 @@ blockchain_t *blockchain_deserialize(char const *path)
 		fclose(file);
 		return (NULL);
 	}
+
+	size = header.n_unspent;
+	if (endian_swap)
+                _swap_endian(&size, sizeof(size));
+
+	if (!read_unspent_txs(file, endian_swap, blockchain, size))
+        {
+                blockchain_destroy(blockchain);
+                fclose(file);
+                return (NULL);
+        }
+
 	fclose(file);
 	return (blockchain);
 
