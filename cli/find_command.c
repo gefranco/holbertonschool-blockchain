@@ -9,6 +9,8 @@ command_t *get_commands(void)
 		{send_cmd, "send"},
 		{mine_cmd, "mine"},
 		{info_cmd, "info"},
+		{load_cmd, "load"},
+		{save_cmd, "save"},
 		{NULL, NULL}
 	};
 	return (commands);

@@ -29,7 +29,7 @@ static int send(state_t *state, uint32_t amount, uint8_t pub[EC_PUB_LEN], char *
 		return ((state->status = EXIT_FAILURE));
 	}
 
-	if (!transaction_is_valid(tx, state->blockchain->unspent))
+	if ((transaction_is_valid(tx, state->blockchain->unspent)) != 0)
 	{
 		fprintf(stderr, "%s: invalid transaction\n",
 			argv[0]);
