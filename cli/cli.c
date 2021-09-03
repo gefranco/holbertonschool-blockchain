@@ -6,7 +6,14 @@
 
 #include "cli.h"
 
-
+/**
+ * dispatch - dispatch a command by calling the associate function
+ * @state: cli state
+ * @argc: number of arguments passed
+ * @argv: arguments
+ * Return: -1 if not command found,
+ *         otherwise the exit status of the executed command
+ */
 int dispatch(state_t *state, int argc, char *argv[])
 {
 	command_t *command = find_command(argv[0]);
@@ -19,6 +26,12 @@ int dispatch(state_t *state, int argc, char *argv[])
 	return (command->func(state, argc, argv));
 }
 
+/**
+ * tokenize - tokenize a line input
+ * @input: the line to tokenize
+ * @tkns: an array of strings to put the tokens
+ * Return: the number of tokens
+ */
 int tokenize(char *input, char *tkns[])
 {
 	char *tk;
@@ -39,7 +52,12 @@ int tokenize(char *input, char *tkns[])
 	return (i);
 }
 
-
+/**
+ * main - entry point
+ * Return: EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS if no command is executed
+ *         otherwise the exit status of the las executed command
+ */
 int main(void)
 {
 	state_t state = {0};

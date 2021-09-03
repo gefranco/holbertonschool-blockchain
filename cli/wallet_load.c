@@ -3,6 +3,15 @@
 
 #include "cli.h"
 
+/**
+ * wallet_load - read ec_keys from a file
+ * @state: cli state
+ * @argc: number of arguments passed
+ * @argv: arguments
+ * Return: 2 if number of arguments are wrong,
+ *         EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS otherwise
+ */
 int wallet_load(state_t *state, int argc, char *argv[100])
 {
 	EC_KEY *wallet = NULL;

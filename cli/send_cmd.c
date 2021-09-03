@@ -4,6 +4,15 @@
 #include <limits.h>
 #include "cli.h"
 
+/**
+ * send - send coins
+ * @state: cli state
+ * @amount: total coins to send
+ * @pub: public key to send the coins
+ * @argv: arguments
+ * Return: EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS otherwise
+ */
 static int send(state_t *state,
 		uint32_t amount,
 		uint8_t pub[EC_PUB_LEN], char *argv[])
@@ -50,7 +59,15 @@ static int send(state_t *state,
 	return ((state->status = EXIT_SUCCESS));
 }
 
-
+/**
+ * send_cmd - send coins
+ * @state: cli state
+ * @argc: number of arguments passed
+ * @argv: arguments
+ * Return: 2 if number of arguments are wrong,
+ *         EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS otherwise
+ */
 int send_cmd(state_t *state, int argc, char *argv[])
 {
 	uint8_t pub[EC_PUB_LEN] = {0};

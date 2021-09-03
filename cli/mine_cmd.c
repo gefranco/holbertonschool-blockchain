@@ -4,6 +4,13 @@
 #include "cli.h"
 
 
+/**
+ * invalid_tx - filter invalid transactions
+ * @node: transaction
+ * @arg: list of unspent transactions
+ * Return: 1 if node is invalid,0 otherwise
+ *
+ */
 static int invalid_tx(llist_node_t node, void *arg)
 {
 	transaction_t *transaction = node;
@@ -12,6 +19,13 @@ static int invalid_tx(llist_node_t node, void *arg)
 	return (!transaction_is_valid(transaction, unspent));
 }
 
+/**
+ * add_transaction - add a transaction to a block
+ * @node: transaction
+ * @idx: transaction index
+ * @arg: block in wich the transaction will be added
+ * Return: 0 on succes -1 otherwise
+ */
 static int add_transaction(llist_node_t node, unsigned int idx, void *arg)
 {
 	transaction_t *transaction = node;
@@ -21,6 +35,16 @@ static int add_transaction(llist_node_t node, unsigned int idx, void *arg)
 	return (llist_add_node(block->transactions, transaction, ADD_NODE_REAR));
 }
 
+/**
+ * mine - mine a block
+ * @state: cli state
+ * @block: block to mine
+ * @prev_block: previous block in the blockchain
+ * @coinbase_tx: coinbase transaction
+ * @argv: arguments
+ * Return: EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS otherwise
+ */
 static int mine(state_t *state, block_t *block, block_t *prev_block,
 		transaction_t *coinbase_tx, char *argv[])
 {
@@ -66,7 +90,15 @@ static int mine(state_t *state, block_t *block, block_t *prev_block,
 	return ((state->status = EXIT_SUCCESS));
 }
 
-
+/**
+ * mine_cmd - mine a block
+ * @state: cli state
+ * @argc: number of arguments passed
+ * @argv: arguments
+ * Return: 2 if number of arguments are wrong,
+ *         EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS otherwise
+ */
 int mine_cmd(state_t *state, int argc, char *argv[])
 {
 	int8_t block_data[1024] = {0};

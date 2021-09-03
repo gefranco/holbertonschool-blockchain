@@ -3,6 +3,15 @@
 
 #include "cli.h"
 
+/**
+ * save_cmd - save blockchain to a file
+ * @state: cli state
+ * @argc: number of arguments passed
+ * @argv: arguments
+ * Return: 2 if number of arguments are wrong,
+ *         EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS otherwise
+ */
 int save_cmd(state_t *state, int argc, char *argv[])
 {
 

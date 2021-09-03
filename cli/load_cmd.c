@@ -3,6 +3,15 @@
 
 #include "cli.h"
 
+/**
+ * load_cmd - load the blockchain from a file
+ * @state: cli state
+ * @argc: number of arguments passed
+ * @argv: arguments
+ * Return: 2 if number of arguments are wrong,
+ *         EXIT_FAILURE if call to a function fails
+ *         EXIT_SUCCESS otherwise
+ */
 int load_cmd(state_t *state, int argc, char *argv[])
 {
 	blockchain_t *blockchain = NULL;
