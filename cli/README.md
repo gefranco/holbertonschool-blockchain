@@ -32,3 +32,17 @@ make cli
 ./cli
 ```
 to star the cli
+
+
+## Commands
+### `wallet_load` \[\<path>\]
+
+### `wallet_save` \[\<path>\]
+
+### `send` \<amount> \<address>
+  * \<amount> the number of coins to send
+  * \<address> public key of the recipient
+### `mine`
+### `info`
+### `load` \[\<path>\]
+### `save` \[\<path>\]
