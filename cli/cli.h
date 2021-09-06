@@ -6,24 +6,37 @@
 #include "../blockchain/v0.3/blockchain.h"
 #include "../blockchain/v0.3/transaction/transaction.h"
 
+/**
+ * struct state_s - client state structure
+ *
+ * @status: most recent executed command status
+ * @wallet: ec_keys
+ * @blockchain: blockchain
+ * @tx_pool: transaction pool
+ */
 typedef struct state_s
 {
 	int status;
 	EC_KEY *wallet;
 	blockchain_t *blockchain;
 	llist_t *tx_pool;
-	
-	
+
 } state_t;
 
 typedef int (*command_func_t)(state_t *, int argc, char *argv[]);
 
+/**
+ * struct command_s - cilent command structure
+ *
+ * @func: function associated to the command
+ * @name: name command
+ */
 typedef struct command_s
 {
-	
+
 	command_func_t func;
 	char const *name;
-	
+
 } command_t;
 
 
