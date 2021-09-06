@@ -29,6 +29,6 @@ make cli
 
 ## Use
 ```bash
-.cli
+./cli
 ```
 to star the cli
