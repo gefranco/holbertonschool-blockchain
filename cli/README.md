@@ -14,8 +14,7 @@ sudo apt-get install libssl-dev
 ```
 * `llist.so` and `llist.h`
 ```bash
-cd llist/
-./install.bash
+[a link](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/llist)
 ```
 
 ### Compilation
