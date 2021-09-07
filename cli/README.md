@@ -13,7 +13,7 @@ sudo apt-get install libssl1.0.0
 sudo apt-get install libssl-dev
 ```
 * `llist.so` and `llist.h`
-[a link](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/llist)
+[https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/llist](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/llist)
 
 ### Compilation
 Navigate to `cli/`:
